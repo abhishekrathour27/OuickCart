@@ -1,64 +1,51 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Slider1 from "./Slider1";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import Slider1 from "./components/Slider1";
+import { sliderData } from "./components/data/data";
 
+const sliderArr = [
+  {
+    key: 0,
+    node: (
+      <Slider1
+        offer={sliderData[0].offer}
+        description={sliderData[0].description}
+        img={sliderData[0].img}
+      />
+    ),
+  },
+  {
+    key: 1,
+    node: (
+      <Slider1
+        offer={sliderData[1].offer}
+        description={sliderData[1].description}
+        img={sliderData[1].img}
+      />
+    ),
+  },
+  {
+    key: 2,
+    node: (
+      <Slider1
+        offer={sliderData[2].offer}
+        description={sliderData[2].description}
+        img={sliderData[2].img}
+      />
+    ),
+  },
+];
 const HeroSec = () => {
-  const sliderData = [
-    {
-      offer: "Limited Time Offer 30% Off",
-      description: "Experience Pure Sound - Your Perfect Headphones Awaits!",
-      img: "header_headphone_image.png",
-    },
-    {
-      offer: "Hurry up only few lefts!",
-      description:
-        "Next-Level Gaming Starts Here - Discover PlayStation 5 Today!",
-      img: "header_playstation_image.png",
-    },
-    {
-      offer: "Exclusive Deal 40% Off",
-      description: "Power Meets Elegance - Apple MacBook Pro is Here for you!",
-      img: "header_macbook_image.png",
-    },
-  ];
-
-  const sliderArr = [
-    {
-      key: 0,
-      node: (
-        <Slider1
-          offer={sliderData[0].offer}
-          description={sliderData[0].description}
-          img={sliderData[0].img}
-        />
-      ),
-    },
-    {
-      key: 1,
-      node: (
-        <Slider1
-          offer={sliderData[1].offer}
-          description={sliderData[1].description}
-          img={sliderData[1].img}
-        />
-      ),
-    },
-    {
-      key: 2,
-      node: (
-        <Slider1
-          offer={sliderData[2].offer}
-          description={sliderData[2].description}
-          img={sliderData[2].img}
-        />
-      ),
-    },
-  ];
-
   const [index, setIndex] = useState(0);
 
+  useEffect(() => {
+    setInterval(() => {
+      setIndex((prev)=> prev === sliderArr.length-1 ? 0 : prev + 1)
+      // setIndex((prev) => (prev === 0 ? sliderArr.length - 1 : prev - 1));
+    }, 3000);
+  }, []);
 
   return (
     <div>
