@@ -1,6 +1,9 @@
+"use client"
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const Navbar = () => {
+  const router = useRouter();
   return (
     <div>
       <div className="flex justify-around items-center h-16 border border-b-gray-300">
@@ -9,8 +12,8 @@ const Navbar = () => {
         </div>
         <div>
           <ul className="flex gap-8">
-            <li className="cursor-pointer">Home</li>
-            <li className="cursor-pointer">Shop</li>
+            <li onClick={()=> router.push("/")} className="cursor-pointer">Home</li>
+            <li onClick={()=> router.push("/shop")} className="cursor-pointer">Shop</li>
             <li className="cursor-pointer">About Us</li>
             <li className="cursor-pointer">Contact</li>
           </ul>

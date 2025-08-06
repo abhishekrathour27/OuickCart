@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div className="flex flex-col items-center mt-20" >
       <div className="grid grid-cols-[1.8fr_1fr_1fr] gap-5 w-[77vw] ">
-        <div>
+        <div className="space-y-5">
           <img src="logo.svg" alt="logo" />
           <p>
             Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -13,8 +13,8 @@ const Footer = () => {
             and scrambled it to make a type specimen book
           </p>
         </div>
-        <div className="ml-10">
-            <h1>Company</h1>
+        <div className="ml-10 space-y-5">
+            <h1 className="font-semibold">Company</h1>
             <ul>
                 <li>Home</li>
                 <li>About us</li>
@@ -22,8 +22,8 @@ const Footer = () => {
                 <li>Privacy policy</li>
             </ul>
         </div>
-        <div>
-            <h1>Get in touch</h1>
+        <div className="space-y-5">
+            <h1 className="font-semibold">Get in touch</h1>
             <ul>
                 <li>+1-234-567-890</li>
                 <li>abhishekrathour@gmail.com</li>
