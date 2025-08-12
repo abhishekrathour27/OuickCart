@@ -1,10 +1,10 @@
-import LoginHOC from "@/components/screens/login/LoginHOC";
+import LoginFrom from "@/components/screens/auth/login/components/LoginFrom";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <LoginHOC />
+      <LoginFrom/>
     </div>
   );
 };
