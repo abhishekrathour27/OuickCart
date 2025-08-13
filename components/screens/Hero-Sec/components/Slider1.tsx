@@ -1,5 +1,5 @@
+import CustomBtn from "@/components/custom/CustomBtn";
 import React from "react";
-import CustomBtn from "@/components/custom/CustomBtn"
 
 interface Slider1Props {
   offer: string;

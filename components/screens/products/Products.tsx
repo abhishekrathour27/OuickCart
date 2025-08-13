@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { products } from "@/data/data";
 import { Star } from "lucide-react";
-import { data, div } from "framer-motion/client";
 import CustomBtn from "@/components/custom/CustomBtn";
 
 const Products = () => {

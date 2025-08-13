@@ -3,7 +3,8 @@ import CustomBtn from "@/components/custom/CustomBtn";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
 import React from "react";
-import LoginFrom from "../auth/login/components/LoginFrom";
+
+import AuthTab from "../auth/AuthTab";
 
 const Navbar = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ const Navbar = () => {
           </ul>
         </div>
         <div>
-          <CustomBtn onClick={() => openModal(<LoginFrom />)}>Login</CustomBtn>
+          <CustomBtn onClick={() => openModal(<AuthTab />)}>Login</CustomBtn>
         </div>
         {/* <div className="bg-[#374151] h-8 w-8 flex items-center justify-center text-white rounded-full cursor-pointer">
           <p>A</p>
