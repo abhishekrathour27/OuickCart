@@ -44,7 +44,7 @@ const AuthTab = ({ initialTab = "login" }: AuthTabsProps) => {
             <LoginFrom switchToSignUp={()=> setActiveTab('signUp')} />
           </TabsContent>
           <TabsContent value="signUp" className="animate-fadeIn">
-            <SignUpForm switchToLogin={()=> setActiveTab('login')} />
+            <SignUpForm  switchToLogin={()=> setActiveTab('login')} />
           </TabsContent>
         </Tabs>
       </div>

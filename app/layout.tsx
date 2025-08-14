@@ -5,6 +5,7 @@ import NavbarHOC from "@/components/screens/navbar/NavbarHOC";
 import FooterHOC from "@/components/screens/footer/FooterHOC";
 import { ModalProvider } from "@/context/modalContext";
 import { Toaster } from "sonner";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-         <Toaster position="top-right" richColors />
+        <Toaster position="bottom-right" richColors />
         <ModalProvider>
+        <NextTopLoader showSpinner={false} color="#EA580C" />
           <NavbarHOC />
           {children}
           <FooterHOC />

@@ -6,6 +6,7 @@ import { LoginFormData, loginSchema } from "./validation/loginSchema";
 import CustomBtn from "@/components/custom/CustomBtn";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
+import { useModal } from "@/context/modalContext";
 
 type Props = {
   switchToSignUp: () => void;
@@ -13,14 +14,7 @@ type Props = {
 
 const LoginFrom = ({ switchToSignUp }: Props) => {
   const [showPass, setShowPass] = useState(false);
-
-  const localStorageData = localStorage.getItem("signUp");
-
-  if (localStorageData) {
-    const signUpdata = JSON.parse(localStorageData);
-  } else {
-    console.log("Data not found");
-  }
+  const {closeModal}=useModal();
 
   const {
     register,
@@ -38,14 +32,18 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
       toast.error("Data not found");
       return;
     }
-    const signUpdata = JSON.parse(localStorageData);
-    if (
-      data.email === signUpdata.email &&
-      data.password === signUpdata.password
-    ) {
-      localStorage.setItem('login' , JSON.stringify(data))
+    const signUpdata : LoginFormData[] = JSON.parse(localStorageData);
+
+    const matchData = signUpdata.find((item)=> item.email ===data.email && item.password === data.password);
+
+    if (matchData) {
+      localStorage.setItem("login", JSON.stringify(matchData));
       toast.success("Log in successfully");
-      reset();
+      // reset();
+      closeModal()
+    }
+    else{
+      toast.error('Login failed ! try again')
     }
   };
 

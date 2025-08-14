@@ -10,10 +10,12 @@ import { toast } from "sonner";
 
 type Props = {
   switchToLogin: () => void;
+
 };
 
 const SignUpForm = ({ switchToLogin }: Props) => {
   const [showPass, setShowPass] = useState(false);
+
 
   const {
     register,
@@ -43,9 +45,9 @@ const SignUpForm = ({ switchToLogin }: Props) => {
 
     // Save back to localStorage
     localStorage.setItem("signUp", JSON.stringify(userData));
-
-    reset();
     toast.success("Sign up successfully");
+    switchToLogin()
+    
   };
   return (
     <form onSubmit={handleSubmit(submit)}>

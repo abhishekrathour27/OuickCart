@@ -2,14 +2,34 @@
 import CustomBtn from "@/components/custom/CustomBtn";
 import { useModal } from "@/context/modalContext";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import AuthTab from "../auth/AuthTab";
+type authType = {
+  name : string , 
+  email : string,
+  password : string
+}
 
 const Navbar = () => {
+  const [user,setUser]=useState<authType | null>(null)
   const router = useRouter();
-  const { openModal , openSheet  } = useModal();
+  const { openModal } = useModal();
+  const fetchLocalStorageData = () => {
+    const loginData : authType  = JSON.parse(localStorage.getItem("login") || "null");
+    setUser(loginData)
+  };
+  console.log(user)
+  const userName = user?.name;
+  const firstLatter = userName?.charAt(0).toUpperCase();
+
+  useEffect(() => {
+    fetchLocalStorageData();
+  }, []);
+
+
   return (
+    
     <div>
       <div className="flex justify-around items-center h-16 border border-b-gray-300">
         <div className="cursor-pointer">
@@ -28,11 +48,14 @@ const Navbar = () => {
           </ul>
         </div>
         <div>
-          <CustomBtn onClick={() => openModal(<AuthTab />)}>Login</CustomBtn>
+          {user ? (
+            <div className="bg-[#374151] h-8 w-8 flex items-center justify-center text-white rounded-full cursor-pointer">
+              <p>{firstLatter}</p>
+            </div>
+          ) : (
+            <CustomBtn className="" onClick={() => openModal(<AuthTab />)}>Login</CustomBtn>
+          )}
         </div>
-        {/* <div className="bg-[#374151] h-8 w-8 flex items-center justify-center text-white rounded-full cursor-pointer">
-          <p>A</p>
-        </div> */}
       </div>
     </div>
   );
