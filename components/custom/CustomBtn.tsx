@@ -4,13 +4,15 @@ import React from "react";
 type CustomBtnProps = {
   onClick?: () => void;
   children: React.ReactNode;
-  className: string; // <-- lowercase and optional
+  className: string; 
+  disable? : ()=> void// <-- lowercase and optional
 };
 
 const CustomBtn = ({
   children,
   className = "",
   onClick,
+  disable
 }: CustomBtnProps) => {
   return (
     <button

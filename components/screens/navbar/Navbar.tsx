@@ -19,7 +19,7 @@ const Navbar = () => {
     const loginData : authType  = JSON.parse(localStorage.getItem("login") || "null");
     setUser(loginData)
   };
-  console.log(user)
+  // console.log(user)
   const userName = user?.name;
   const firstLatter = userName?.charAt(0).toUpperCase();
 

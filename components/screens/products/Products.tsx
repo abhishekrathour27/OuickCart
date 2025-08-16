@@ -1,20 +1,25 @@
 "use client";
 import React, { useState } from "react";
 import { products } from "@/data/data";
+import { ProductType } from "@/type/productDataType";  // <-- apna type import karo
 import { Star } from "lucide-react";
 import CustomBtn from "@/components/custom/CustomBtn";
+import { useRouter } from "next/navigation";
+import { data } from "framer-motion/client";
 
 const Products = () => {
-  const [rating, setRating] = useState<{ [key: number]: number }>({});
-  const [hover, setHover] = useState<{ [key: number]: number }>({});
+  const [rating, setRating] = useState<{ [key: string]: number }>({});
+  const [hover, setHover] = useState<{ [key: string]: number }>({});
   const [modal, setModal] = useState(false);
-  const [modalProduct, setModalProduct] = useState({});
+  const [modalProduct, setModalProduct] = useState<ProductType | null>(null); // ✅ fix
 
-  const ratingById = (id: number, star: number) => {
+  const router = useRouter();
+
+  const ratingById = (id: string, star: number) => {
     setRating((prev) => ({ ...prev, [id]: star }));
   };
 
-  const handleHover = (id: number, star: number) => {
+  const handleHover = (id: string, star: number) => {
     setHover((prev) => ({ ...prev, [id]: star }));
   };
 
@@ -32,6 +37,7 @@ const Products = () => {
                 <img
                   src={data.image[0]}
                   alt={data.name}
+                  onClick={() => router.push(`/product/${data._id}`)}
                   className="w-[200px] transition-transform duration-300 ease-in-out hover:scale-105 "
                 />
               </div>
@@ -76,7 +82,7 @@ const Products = () => {
             </div>
           ))}
         </div>
-        {modal && modalProduct && (
+        {modal && modalProduct && ( // ✅ null check
           <div className="fixed inset-0 flex items-center justify-center bg-black/70 bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-xl h-fit w-[20vw] space-y-3">
               <div className="bg-[#F0F0F2] rounded-lg w-fit">
@@ -87,7 +93,9 @@ const Products = () => {
                 />
               </div>
               <p className="font-semibold">{modalProduct.name}</p>
-              <p>{modalProduct.description.split(" ").slice(0, 13).join(" ")}</p>
+              <p>
+                {modalProduct.description.split(" ").slice(0, 13).join(" ")}
+              </p>
               <span className="font-semibold">${modalProduct.price}</span>
               <div className="flex justify-between mt-5">
                 <CustomBtn
@@ -96,7 +104,10 @@ const Products = () => {
                 >
                   Cancel
                 </CustomBtn>
-                <CustomBtn className="rounded-full cursor-pointer">Buy now</CustomBtn>
+                <CustomBtn onClick={()=> router.push(`/product/${modalProduct._id}`)}
+                className="rounded-full cursor-pointer">
+                  Buy now
+                </CustomBtn>
               </div>
             </div>
           </div>
