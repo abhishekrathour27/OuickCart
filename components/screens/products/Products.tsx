@@ -4,8 +4,7 @@ import { products } from "@/data/data";
 import { ProductType } from "@/type/productDataType";  // <-- apna type import karo
 import { Star } from "lucide-react";
 import CustomBtn from "@/components/custom/CustomBtn";
-import { useRouter } from "next/navigation";
-import { data } from "framer-motion/client";
+import { useRouter } from "nextjs-toploader/app";
 
 const Products = () => {
   const [rating, setRating] = useState<{ [key: string]: number }>({});
@@ -38,7 +37,7 @@ const Products = () => {
                   src={data.image[0]}
                   alt={data.name}
                   onClick={() => router.push(`/product/${data._id}`)}
-                  className="w-[200px] transition-transform duration-300 ease-in-out hover:scale-105 "
+                  className="w-[200px] transition-transform duration-300 cursor-pointer ease-in-out hover:scale-105 "
                 />
               </div>
               <p className="font-semibold">{data.name}</p>
