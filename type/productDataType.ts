@@ -8,5 +8,6 @@ export interface ProductType {
   image: string[]; // multiple images
   category: string;
   date: number; // timestamp (ms)
+  quantity: number ; 
   __v: number;
 }

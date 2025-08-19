@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const Page = () => {
   const { id } = useParams();
-  const router = useRouter()
+  const router = useRouter();
   const { handleCartData, cartData } = useCart();
   const newProduct = products.find((item) => item._id === id) as
     | ProductType
@@ -25,7 +25,7 @@ const Page = () => {
     handleCartData(newProduct);
     toast.success("Item added to cart");
   };
-  console.log(cartData)
+  console.log(cartData);
 
   return (
     <div className="flex gap-12 mt-10 px-10">
@@ -97,21 +97,26 @@ const Page = () => {
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
           {matchCartData ? (
-            <CustomBtn onClick={()=> router.push('cart')}
-            className="w-1/2 bg-gray-300 text-black">
+            <CustomBtn
+              onClick={() => router.push("/cart")}
+              className="w-1/2 bg-slate-200 text-gray-600"
+            >
               Go to cart
             </CustomBtn>
           ) : (
             <CustomBtn
               onClick={() => addToCart()}
-              className="w-1/2 bg-gray-300 text-black"
+              className="w-1/2 bg-slate-200 text-gray-600"
             >
               Add to cart
             </CustomBtn>
           )}
 
           <CustomBtn
-            onClick={() => addToCart()}
+            onClick={() => {
+              addToCart();
+              router.push("/cart");
+            }}
             className="w-1/2 bg-orange-500 text-white hover:bg-orange-600"
           >
             Buy now

@@ -85,7 +85,7 @@ useEffect(() => {
               <p>{firstLatter}</p>
             </div>
           ) : (
-            <CustomBtn className="" onClick={() => openModal(<AuthTab />)}>
+            <CustomBtn className="text-white" onClick={() => openModal(<AuthTab />)}>
               Login
             </CustomBtn>
           )}
@@ -105,7 +105,7 @@ useEffect(() => {
                 {/* First div */}
                 <div
                   onClick={() => {
-                    router.push("/product/cart");
+                    router.push("/cart");
                     setProfileModal(false);
                   }}
                   className="flex gap-2 p-4 border-b hover:bg-gray-100 cursor-pointer"

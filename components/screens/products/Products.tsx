@@ -81,7 +81,7 @@ const Products = () => {
             </div>
           ))}
         </div>
-        {modal && modalProduct && ( // ✅ null check
+        {modal && modalProduct && ( 
           <div className="fixed inset-0 flex items-center justify-center bg-black/70 bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-xl h-fit w-[20vw] space-y-3">
               <div className="bg-[#F0F0F2] rounded-lg w-fit">
@@ -99,12 +99,12 @@ const Products = () => {
               <div className="flex justify-between mt-5">
                 <CustomBtn
                   onClick={() => setModal(false)}
-                  className="rounded-full cursor-pointer"
+                  className="rounded-full cursor-pointer text-white"
                 >
                   Cancel
                 </CustomBtn>
                 <CustomBtn onClick={()=> router.push(`/product/${modalProduct._id}`)}
-                className="rounded-full cursor-pointer">
+                className="rounded-full cursor-pointer text-white">
                   Buy now
                 </CustomBtn>
               </div>
