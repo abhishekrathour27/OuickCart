@@ -34,14 +34,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <Toaster position="bottom-right" richColors duration={2000} />
-        <ModalProvider>
-          <CartProvider>
+        <CartProvider>
+          <ModalProvider>
             <NextTopLoader showSpinner={false} color="#EA580C" />
             <NavbarHOC />
             {children}
             <FooterHOC />
-          </CartProvider>
-        </ModalProvider>
+          </ModalProvider>
+        </CartProvider>
       </body>
     </html>
   );

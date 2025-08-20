@@ -1,16 +1,25 @@
 "use client";
 import { useCart } from "@/context/cartContext";
-import { products } from "@/data/data";
 import React, { useState } from "react";
+import { useModal } from "@/context/modalContext";
+import { addressTypeData } from "@/components/screens/select_address/validation/addressSchema";
+import Address from "@/components/screens/select_address/Address";
+import { toast } from "sonner";
 
 const Page = () => {
-  const { cartData , increaseCart , decreaseCart } = useCart()
+  const { cartData, increaseCart, decreaseCart } = useCart();
+  const [address, setAddress] = useState<addressTypeData[]>([]);
+  const [addressModal, setAddressModal] = useState(false);
+  const { openModal } = useModal();
 
   const totalPrice = cartData.reduce(
     (acc, item) => acc + item.offerPrice * item.quantity,
     0
   );
   const taxPrice = Number(((totalPrice * 2) / 100).toFixed(2));
+
+  console.log("address", address);
+  console.log("cart", cartData);
   return (
     <div className="flex justify-center mt-10">
       {/* Cart Section */}
@@ -94,9 +103,21 @@ const Page = () => {
         {/* Select Address */}
         <div>
           <p className="text-gray-700 font-medium mb-2">SELECT ADDRESS</p>
-          <button className="w-full border p-2 text-left">
+          <button
+            onClick={() => {
+             
+              setAddressModal(!addressModal);
+            }}
+            className="w-full border p-2 text-left cursor-pointer"
+          >
             Select Address
           </button>
+          {addressModal && (
+            <div onClick={()=> openModal(<Address setAddress={setAddress} />)}
+             className="w-full border border-black p-2 text-left cursor-pointer">
+              ADD ADDRESS +
+            </div>
+          )}
         </div>
 
         {/* Promo Code */}
@@ -135,7 +156,14 @@ const Page = () => {
         </div>
 
         {/* Place Order */}
-        <button className="w-full bg-orange-500 text-white py-3 font-semibold">
+        <button
+          onClick={() => {
+            cartData.length && address.length
+              ? toast.success("Order placed")
+              : toast.error("Failed to placed");
+          }}
+          className="w-full bg-orange-500 text-white py-3 font-semibold cursor-pointer"
+        >
           Place Order
         </button>
       </div>

@@ -6,14 +6,16 @@ import { createContext, useState, ReactNode, useContext } from "react";
 type CartContextType = {
   cartData: ProductType[];
   handleCartData: (item: ProductType) => void;
-  increaseCart : (id:string)=> void
-  decreaseCart : (id:string)=> void
+  increaseCart: (id: string) => void;
+  decreaseCart: (id: string) => void;
+  setCartData: React.Dispatch<React.SetStateAction<ProductType[]>>;
 };
 
 export const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartData, setCartData] = useState<ProductType[]>([]);
+  const [myOrder, setMyOrder] = useState<ProductType[]>([]);
 
   const handleCartData = (item: ProductType) => {
     setCartData((prev) => {
@@ -49,7 +51,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // console.log(cartData);
 
   return (
-    <CartContext.Provider value={{ cartData, handleCartData , increaseCart , decreaseCart }}>
+    <CartContext.Provider
+      value={{
+        cartData,
+        handleCartData,
+        increaseCart,
+        decreaseCart,
+        setCartData,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
