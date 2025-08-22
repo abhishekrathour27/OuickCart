@@ -1,12 +1,12 @@
 "use client";
 
-import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SignUpFormData, SignUpSchema } from "./validation/SignUpSchema";
 import CustomBtn from "@/components/custom/CustomBtn";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type Props = {
   switchToLogin: () => void;

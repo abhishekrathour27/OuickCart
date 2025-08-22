@@ -25,7 +25,6 @@ const Page = () => {
     handleCartData(newProduct);
     toast.success("Item added to cart");
   };
-  console.log(cartData);
 
   return (
     <div className="flex gap-12 mt-10 px-10">
