@@ -7,6 +7,12 @@ import { useCart } from "@/context/cartContext";
 import { ProductType } from "@/type/productDataType";
 import { toast } from "sonner";
 
+type LoginData = {
+  name: string;
+  email: string;
+  password: string;
+} | null;
+
 const Page = () => {
   const { id } = useParams();
   const router = useRouter();
@@ -21,9 +27,16 @@ const Page = () => {
   const [imgIndex, setImgIndex] = useState(newProduct.image[0]);
   const matchCartData = cartData.some((item) => item._id === newProduct._id);
 
+  const loginData: LoginData =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("login") || "null")
+      : null;
+
   const addToCart = () => {
-    handleCartData(newProduct);
-    toast.success("Item added to cart");
+    if (loginData) {
+      handleCartData(newProduct);
+      toast.success("Item added to cart");
+    }
   };
 
   return (
