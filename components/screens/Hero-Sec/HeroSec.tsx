@@ -4,6 +4,7 @@ import { MoveLeft, MoveRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Slider1 from "./components/Slider1";
 import { sliderData } from "./components/data/data";
+import { profile } from "@/services/authServices";
 
 const sliderArr = [
   {

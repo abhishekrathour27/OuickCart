@@ -7,6 +7,7 @@ import CustomBtn from "@/components/custom/CustomBtn";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 import { useModal } from "@/context/modalContext";
+import { login } from "@/services/authServices";
 
 type Props = {
   switchToSignUp: () => void;
@@ -14,38 +15,32 @@ type Props = {
 
 const LoginFrom = ({ switchToSignUp }: Props) => {
   const [showPass, setShowPass] = useState(false);
-  const {closeModal}=useModal();
+  const { closeModal } = useModal();
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
   });
 
-  const submit = (data: LoginFormData) => {
-    const localStorageData = localStorage.getItem("signUp");
-
-    if (!localStorageData) {
-      toast.error("Data not found");
-      return;
-    }
-    const signUpdata : LoginFormData[] = JSON.parse(localStorageData);
-
-    const matchData = signUpdata.find((item)=> item.email ===data.email && item.password === data.password);
-
-    if (matchData) {
-      localStorage.setItem("login", JSON.stringify(matchData));
-      toast.success("Log in successfully");
-      // reset();
-      closeModal()
-    }
-    else{
-      toast.error('Login failed ! try again')
+  const submit = async (data: LoginFormData) => {
+    try {
+      const loginData = await login(data);
+      if (loginData.status === "success") {
+        localStorage.setItem("token", loginData.data.accessToken);
+        closeModal();
+        toast.success("Login successfully");
+      }
+    } catch (error) {
+      toast.error("Login failed");
     }
   };
+
+  const handleForgetPassword = async(email : {email : string})=>{
+       
+  }
 
   return (
     <div className="my-5">
@@ -96,6 +91,10 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
         >
           Create one here
         </span>
+      </center>
+      <center
+        className="text-blue-500 cursor-pointer hover:underline hover:underline-offset-auto">
+        forget password ?
       </center>
     </div>
   );

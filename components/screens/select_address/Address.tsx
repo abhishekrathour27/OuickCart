@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import CustomBtn from "@/components/custom/CustomBtn";
 import { toast } from "sonner";
 import { useModal } from "@/context/modalContext";
-import { useCart } from "@/context/cartContext";
 
 type ChildFormProps = {
   setAddress: React.Dispatch<React.SetStateAction<addressTypeData[]>>;
@@ -17,7 +16,6 @@ const Address = ({ setAddress }: ChildFormProps) => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<addressTypeData>({
     resolver: yupResolver(addressSchema),

@@ -7,15 +7,14 @@ import CustomBtn from "@/components/custom/CustomBtn";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { signup } from "@/services/authServices";
 
 type Props = {
   switchToLogin: () => void;
-
 };
 
 const SignUpForm = ({ switchToLogin }: Props) => {
   const [showPass, setShowPass] = useState(false);
-
 
   const {
     register,
@@ -26,28 +25,16 @@ const SignUpForm = ({ switchToLogin }: Props) => {
     resolver: yupResolver(SignUpSchema),
   });
 
-  const submit = (data: SignUpFormData) => {
-    let userData: SignUpFormData[] = [];
-
+  const submit = async (data: SignUpFormData) => {
     try {
-      const existingDataString = localStorage.getItem("signUp");
-      const parsed = existingDataString ? JSON.parse(existingDataString) : [];
-
-      // Ensure parsed value is actually an array
-      userData = Array.isArray(parsed) ? parsed : [];
+      const signupData = await signup(data);
+      if (signupData?.data.status === "success") {
+        switchToLogin();
+        toast.success("signup successfully");
+      }
     } catch (error) {
-      console.error("Error parsing localStorage data", error);
-      userData = [];
+      toast.error("signup failed");
     }
-
-    // Add new signup data
-    userData.push(data);
-
-    // Save back to localStorage
-    localStorage.setItem("signUp", JSON.stringify(userData));
-    toast.success("Sign up successfully");
-    switchToLogin()
-    
   };
   return (
     <form onSubmit={handleSubmit(submit)}>

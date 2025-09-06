@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   ShoppingCart,
 } from "lucide-react";
+import { profile } from "@/services/authServices";
 type authType = {
   name: string;
   email: string;
@@ -39,22 +40,21 @@ useEffect(() => {
 
 
   const { openModal } = useModal();
-  const fetchLocalStorageData = () => {
-    const loginData: authType = JSON.parse(
-      localStorage.getItem("login") || "null"
-    );
-    setUser(loginData);
+  const fetchProfileData = async() => {
+    const loginData = await profile()
+    console.log(loginData)
+    setUser(loginData.data.user);
   };
   // console.log(user)
   const userName = user?.name;
   const firstLatter = userName?.charAt(0).toUpperCase();
 
   useEffect(() => {
-    fetchLocalStorageData();
+    fetchProfileData()
   }, []);
 
   const logoutData = ()=>{
-    localStorage.removeItem('login');
+    localStorage.removeItem('token');
   }
 
   return (
