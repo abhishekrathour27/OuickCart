@@ -1,74 +1,98 @@
 "use client";
-import { ProductType } from "@/type/productDataType";
-import { createContext, useState, ReactNode, useContext } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { toast } from "sonner";
+import cartServices from "@/services/cartServices";
+import { CartItemResponseType, ProductID } from "@/type/productDataType";
 
-// type of context
 type CartContextType = {
-  cartData: ProductType[];
-  handleCartData: (item: ProductType) => void;
-  increaseCart: (id: string) => void;
-  decreaseCart: (id: string) => void;
-  setCartData: React.Dispatch<React.SetStateAction<ProductType[]>>;
+  data: CartItemResponseType[];
+  loading: boolean;
+  getCartData: () => Promise<void>;
+  addToCart: (productId: string) => Promise<CartItemResponseType | null>;
+  removeFromCart?: (productId: string) => Promise<void>;
+  decreaseCartData?: (productID: string) => Promise<void>;
 };
 
-export const CartContext = createContext<CartContextType | null>(null);
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartData, setCartData] = useState<ProductType[]>([]);
-  const [myOrder, setMyOrder] = useState<ProductType[]>([]);
+  const [data, setData] = useState<CartItemResponseType[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleCartData = (item: ProductType) => {
-    setCartData((prev) => {
-      const existsData = prev.some((product) => product._id === item._id);
+  // 🟢 Get Cart Data
+  const getCartData = async () => {
+    try {
+      setLoading(true);
+      const response = await cartServices.getCartData();
 
-      if (existsData) {
-        return prev.map((product) =>
-          product._id === item._id
-            ? { ...product, quantity: (product.quantity || 1) + 1 }
-            : product
-        );
-      }
-      return [...prev, { ...item, quantity: 1 }];
-    });
-  };
-  const increaseCart = (id: string) => {
-    setCartData((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
-      )
-    );
-  };
-  const decreaseCart = (id: string) => {
-    setCartData((prev) => 
-      prev.map((item) =>
-        item._id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
+      // console.log("rse",response.data.items)
+      setData(response?.data?.items);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to fetch cart");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // console.log(cartData);
+  const addToCart = async (
+    productId: string
+  ): Promise<CartItemResponseType | null> => {
+    try {
+      const response = await cartServices.addToCart(productId);
+      toast.success("Added to cart!");
+      await getCartData();
+      return response?.data;
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add to cart");
+      return null;
+    }
+  };
+  const removeFromCart = async (productId: string) => {
+    try {
+      const response = await cartServices.removeCartData(productId);
+      console.log("rem", response);
+      await getCartData();
+      toast.success("product removed from the cart");
+      // return response;
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const decreaseCartData = async (productId: string) => {
+    try {
+      const response = await cartServices.decreaseFromCart(productId);
+      await getCartData();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  // optional: removeFromCart, clearCart, increase/decrease quantity bhi add kar sakte ho
+
+  useEffect(() => {
+    getCartData(); // mount pe cart fetch
+  }, []);
+
 
   return (
     <CartContext.Provider
-      value={{
-        cartData,
-        handleCartData,
-        increaseCart,
-        decreaseCart,
-        setCartData,
-      }}
+      value={{ data, loading, getCartData, addToCart, removeFromCart , decreaseCartData }}
     >
       {children}
     </CartContext.Provider>
   );
 };
 
+// hook for easy use
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within the CartProvider");
-  }
+  if (!context) throw new Error("useCart must be used within CartProvider");
   return context;
 };

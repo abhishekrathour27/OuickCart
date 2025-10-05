@@ -8,6 +8,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 import { useModal } from "@/context/modalContext";
 import { login } from "@/services/authServices";
+import { useRouter } from "nextjs-toploader/app";
 
 type Props = {
   switchToSignUp: () => void;
@@ -17,9 +18,11 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
   const [showPass, setShowPass] = useState(false);
   const { closeModal } = useModal();
 
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
@@ -31,16 +34,27 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
       if (loginData.status === "success") {
         localStorage.setItem("token", loginData.data.accessToken);
         closeModal();
-        toast.success("Login successfully");
+        toast.success(loginData?.message);
+      }
+      if(loginData?.data?.role === "admin"){
+        // router.push("/admin")
+        localStorage.setItem("role" , "admin")
       }
     } catch (error) {
       toast.error("Login failed");
     }
   };
 
-  const handleForgetPassword = async(email : {email : string})=>{
-       
-  }
+  const handleForgetPassword = () => {
+    const email = getValues("email");
+
+    if (!email) {
+      toast.error("Please enter your email first");
+      return;
+    }
+    router.push("/forget-password");
+    closeModal()
+  };
 
   return (
     <div className="my-5">
@@ -93,7 +107,9 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
         </span>
       </center>
       <center
-        className="text-blue-500 cursor-pointer hover:underline hover:underline-offset-auto">
+        onClick={handleForgetPassword}
+        className="text-blue-500 cursor-pointer hover:underline hover:underline-offset-auto"
+      >
         forget password ?
       </center>
     </div>

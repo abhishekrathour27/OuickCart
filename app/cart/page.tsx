@@ -5,21 +5,28 @@ import { useModal } from "@/context/modalContext";
 import { addressTypeData } from "@/components/screens/select_address/validation/addressSchema";
 import Address from "@/components/screens/select_address/Address";
 import { toast } from "sonner";
+import { useProduct } from "@/context/productContext";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const { cartData, increaseCart, decreaseCart } = useCart();
+  const { data, removeFromCart , addToCart , decreaseCartData } = useCart();
+  const { products } = useProduct();
   const [address, setAddress] = useState<addressTypeData[]>([]);
   const [addressModal, setAddressModal] = useState(false);
   const { openModal } = useModal();
+  const router = useRouter();
 
-  const totalPrice = cartData.reduce(
-    (acc, item) => acc + item.offerPrice * item.quantity,
+  // console.log("object", cartData);
+
+  const totalPrice = data?.reduce(
+    (acc, item) => acc + item.productId?.offerPrice * item.quantity,
     0
   );
+  // console.log('totoal' , totalPrice)
   const taxPrice = Number(((totalPrice * 2) / 100).toFixed(2));
 
-  console.log("address", address);
-  console.log("cart", cartData);
+  // console.log("address", address);
+  console.log("cartd", data);
   return (
     <div className="flex justify-center mt-10">
       {/* Cart Section */}
@@ -38,55 +45,92 @@ const Page = () => {
         </div>
 
         {/* Cart Items */}
-        {cartData.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className="grid grid-cols-[1.7fr_1fr_1fr_1fr] items-center py-5 border-b"
-            >
-              {/* Product Details */}
-              <div className="flex items-center gap-4">
-                <img
-                  src={item.image[0]}
-                  alt={item.name}
-                  className="w-[100px] rounded"
-                />
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  <button className="text-red-500 text-sm hover:underline">
-                    Remove
+        {data?.length > 0 ? (
+          data?.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="grid grid-cols-[1.7fr_1fr_1fr_1fr] items-center py-5 border-b"
+              >
+                {/* Product Details */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item.productId?.image?.[0]}
+                    alt={item.productId?.name}
+                    className="w-[100px] rounded"
+                  />
+                  <div>
+                    <p className="font-medium">{item.productId?.name}</p>
+                    <button
+                      onClick={() => removeFromCart?.(item.productId._id)}
+                      className="text-red-500 text-sm hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <span className="text-gray-700">
+                  ${item.productId?.offerPrice}
+                </span>
+
+                {/* Quantity */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    disabled={item.quantity === 1}
+                    onClick={() => decreaseCartData?.(item.productId._id)}
+                    className="px-2 border cursor-pointer"
+                  >
+                    -
+                  </button>
+                  <span className="w-8 text-center border">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => addToCart(item.productId._id)}
+                    className="px-2 border cursor-pointer"
+                  >
+                    +
                   </button>
                 </div>
+
+                {/* Subtotal */}
+                <span className="text-gray-700">
+                  ${(item.productId?.offerPrice * item.quantity).toFixed(2)}
+                </span>
               </div>
+            );
+          })
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20">
+            {/* Image */}
+            <img
+              src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-illustration-svg-download-png-6024626.png" // replace with actual path
+              alt="Empty Cart"
+              className="w-64 h-64 object-contain mb-6"
+            />
 
-              {/* Price */}
-              <span className="text-gray-700">${item.offerPrice}</span>
+            {/* Heading */}
+            <h2 className="text-2xl font-semibold mb-2 text-gray-800">
+              Your cart seems to be empty
+            </h2>
 
-              {/* Quantity */}
-              <div className="flex items-center gap-2">
-                <button
-                  disabled={item.quantity === 1}
-                  onClick={() => decreaseCart(item._id)}
-                  className="px-2 border cursor-pointer"
-                >
-                  -
-                </button>
-                <span className="w-8 text-center border">{item.quantity}</span>
-                <button
-                  onClick={() => increaseCart(item._id)}
-                  className="px-2 border cursor-pointer"
-                >
-                  +
-                </button>
-              </div>
+            {/* Subheading */}
+            <p className="text-gray-500 text-center mb-6 px-4">
+              Looks like you haven't added any items yet. Explore our collection
+              and find something you love!
+            </p>
 
-              {/* Subtotal */}
-              <span className="text-gray-700">
-                ${(item.offerPrice * item.quantity).toFixed(2)}
-              </span>
-            </div>
-          );
-        })}
+            {/* Browse Button */}
+            <button
+              onClick={() => router.push("/shop")}
+              className="bg-gradient-to-r cursor-pointer from-purple-500 to-blue-400 text-white px-6 py-2 rounded-lg hover:opacity-90 transition"
+            >
+              Browse Books
+            </button>
+          </div>
+        )}
 
         {/* Continue Shopping */}
         <div className="mt-5">
@@ -99,13 +143,11 @@ const Page = () => {
       {/* Order Summary */}
       <div className="w-[25vw] bg-gray-100 p-6 ml-10 space-y-5">
         <h2 className="text-xl font-semibold">Order Summary</h2>
-
         {/* Select Address */}
         <div>
           <p className="text-gray-700 font-medium mb-2">SELECT ADDRESS</p>
           <button
             onClick={() => {
-             
               setAddressModal(!addressModal);
             }}
             className="w-full border p-2 text-left cursor-pointer"
@@ -113,13 +155,14 @@ const Page = () => {
             Select Address
           </button>
           {addressModal && (
-            <div onClick={()=> openModal(<Address setAddress={setAddress} />)}
-             className="w-full border border-black p-2 text-left cursor-pointer">
+            <div
+              onClick={() => openModal(<Address setAddress={setAddress} />)}
+              className="w-full border border-black p-2 text-left cursor-pointer"
+            >
               ADD ADDRESS +
             </div>
           )}
         </div>
-
         {/* Promo Code */}
         <div>
           <p className="text-gray-700 font-medium mb-2">PROMO CODE</p>
@@ -132,12 +175,11 @@ const Page = () => {
             <button className="bg-orange-500 text-white px-4">Apply</button>
           </div>
         </div>
-
-        {/* Price Details */}
+        Price Details
         <div className="space-y-2 border-t pt-4">
           <div className="flex justify-between">
             <span>Price</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>${totalPrice?.toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span>Shipping Fee</span>
@@ -148,17 +190,15 @@ const Page = () => {
             <span>${taxPrice}</span>
           </div>
         </div>
-
         {/* Total */}
         <div className="flex justify-between font-semibold text-lg border-t pt-4">
           <span>Total</span>
           <span>{(totalPrice + taxPrice).toFixed(2)}</span>
         </div>
-
         {/* Place Order */}
         <button
           onClick={() => {
-            cartData.length && address.length
+            data.length && address.length
               ? toast.success("Order placed")
               : toast.error("Failed to placed");
           }}

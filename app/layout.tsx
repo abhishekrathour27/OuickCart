@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavbarHOC from "@/components/screens/navbar/NavbarHOC";
-import FooterHOC from "@/components/screens/footer/FooterHOC";
 import { ModalProvider } from "@/context/modalContext";
 import { Toaster } from "sonner";
 import NextTopLoader from "nextjs-toploader";
+import { ProductProvider } from "@/context/productContext";
 import { CartProvider } from "@/context/cartContext";
+import ClientLayout from "@/components/screens/layout/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +35,12 @@ export default function RootLayout({
       >
         <Toaster position="bottom-right" richColors duration={2000} />
         <CartProvider>
-          <ModalProvider>
-            <NextTopLoader showSpinner={false} color="#EA580C" />
-            <NavbarHOC />
-            {children}
-            <FooterHOC />
-          </ModalProvider>
+          <ProductProvider>
+            <ModalProvider>
+              <NextTopLoader showSpinner={false} color="#EA580C" />
+              <ClientLayout>{children}</ClientLayout>
+            </ModalProvider>
+          </ProductProvider>
         </CartProvider>
       </body>
     </html>

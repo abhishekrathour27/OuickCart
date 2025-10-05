@@ -6,11 +6,12 @@ import React, { useEffect, useRef, useState } from "react";
 import AuthTab from "../auth/AuthTab";
 import {
   CircleUserRound,
+  Heart,
   LogOut,
   ShoppingBag,
   ShoppingCart,
 } from "lucide-react";
-import { profile } from "@/services/authServices";
+import { logout, profile } from "@/services/authServices";
 type authType = {
   name: string;
   email: string;
@@ -24,38 +25,51 @@ const Navbar = () => {
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        setProfileModal(false);
+      }
+    };
 
-useEffect(() => {
-  const handleClickOutside = (e: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      setProfileModal(false);
-    }
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
-
+  // const token = localStorage.getItem("token");
 
   const { openModal } = useModal();
-  const fetchProfileData = async() => {
-    const loginData = await profile()
-    console.log(loginData)
-    setUser(loginData.data.user);
+  const fetchProfileData = async () => {
+    const loginData = await profile();
+    // console.log(loginData);
+    setUser(loginData?.data.user);
   };
   // console.log(user)
   const userName = user?.name;
   const firstLatter = userName?.charAt(0).toUpperCase();
 
   useEffect(() => {
-    fetchProfileData()
+    fetchProfileData();
   }, []);
 
-  const logoutData = ()=>{
-    localStorage.removeItem('token');
-  }
+  const logoutData = async () => {
+    try {
+      await logout();
+      localStorage.removeItem("token");
+      setUser(null);
+    } catch (error) {
+      console.error("logout error", error);
+    }
+  };
+  const [role, setRole] = useState<string | null>(null);
+  //   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setRole(localStorage?.getItem("role"));
+    // setMounted(true);
+  }, []);
 
   return (
     <div>
@@ -65,7 +79,7 @@ useEffect(() => {
         </div>
         <span></span>
         <div>
-          <ul className="flex gap-8">
+          <ul className="flex gap-8 items-center cur">
             <li onClick={() => router.push("/")} className="cursor-pointer">
               Home
             </li>
@@ -74,6 +88,12 @@ useEffect(() => {
             </li>
             <li className="cursor-pointer">About Us</li>
             <li className="cursor-pointer">Contact</li>
+            {role === "admin" && (
+              <button onClick={()=> router.push("/admin")}
+               className="bg-gray-300 text-slate-500 px-2 py-1 rounded-full cursor-pointer">
+                Seller dashboard
+              </button>
+            )}
           </ul>
         </div>
         <div className="relative">
@@ -85,14 +105,19 @@ useEffect(() => {
               <p>{firstLatter}</p>
             </div>
           ) : (
-            <CustomBtn className="text-white" onClick={() => openModal(<AuthTab />)}>
+            <CustomBtn
+              className="text-white"
+              onClick={() => openModal(<AuthTab />)}
+            >
               Login
             </CustomBtn>
           )}
           {profileModal && (
             <>
-            
-              <div ref={modalRef} className="absolute top-15 right-5 border h-[35vh] w-[25vw] bg-white shadow-xl rounded-lg flex flex-col z-50">
+              <div
+                ref={modalRef}
+                className="absolute top-15 right-5 border h-[43vh] w-[25vw] bg-white shadow-xl rounded-lg flex flex-col z-50"
+              >
                 {/* Profile Section */}
                 <div className="flex items-center p-4 gap-5 border-b">
                   <CircleUserRound size={40} />
@@ -119,14 +144,27 @@ useEffect(() => {
                   <ShoppingBag />
                   <p className=" text-gray-500">My orders</p>
                 </div>
+                <div
+                  onClick={() => {
+                    router.push("/wishlist");
+                    setProfileModal(false);
+                  }}
+                  className="flex gap-2 items-center p-4 border-b hover:bg-gray-100 cursor-pointer"
+                >
+                  <Heart />
+                  <p className=" text-gray-500">My Wishlist</p>
+                </div>
 
                 {/* Third div */}
-                <div onClick={()=> {
-                  logoutData();
-                  router.push('/')
-                  setProfileModal(false)
-                }}
-                className="flex gap-2 p-4 hover:bg-gray-100 cursor-pointer text-red-600">
+                <div
+                  onClick={() => {
+                    logoutData();
+                    localStorage.removeItem("role")
+                    router.push("/");
+                    setProfileModal(false);
+                  }}
+                  className="flex gap-2 p-4 hover:bg-gray-100 cursor-pointer text-red-600"
+                >
                   <LogOut />
                   <p className="font-medium">Logout</p>
                 </div>

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { SignUpFormData, SignUpSchema } from "./validation/SignUpSchema";
 import CustomBtn from "@/components/custom/CustomBtn";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signup } from "@/services/authServices";
+import { useForm } from "react-hook-form";
 
 type Props = {
   switchToLogin: () => void;
@@ -30,10 +30,10 @@ const SignUpForm = ({ switchToLogin }: Props) => {
       const signupData = await signup(data);
       if (signupData?.data.status === "success") {
         switchToLogin();
-        toast.success("signup successfully");
+        toast.success(signupData.data.message);
       }
-    } catch (error) {
-      toast.error("signup failed");
+    } catch (error : any) {
+      toast.error(error.message);
     }
   };
   return (

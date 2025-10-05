@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { products } from "@/data/data";
 import CustomBtn from "@/components/custom/CustomBtn";
-import { useCart } from "@/context/cartContext";
+import { useProduct } from "@/context/productContext";
 import { ProductType } from "@/type/productDataType";
-import { toast } from "sonner";
+import { useCart } from "@/context/cartContext";
 
 type LoginData = {
   name: string;
@@ -16,28 +15,38 @@ type LoginData = {
 const Page = () => {
   const { id } = useParams();
   const router = useRouter();
-  const { handleCartData, cartData } = useCart();
-  const newProduct = products.find((item) => item._id === id) as
-    | ProductType
-    | undefined;
+  const { fetchProductById } = useProduct();
+  const { addToCart } = useCart();
 
-  if (!newProduct) {
-    return <div className="text-red-500">❌ Product not found</div>;
-  }
-  const [imgIndex, setImgIndex] = useState(newProduct.image[0]);
-  const matchCartData = cartData.some((item) => item._id === newProduct._id);
+  // ✅ null safe product state
+  const [dataById, setDataById] = useState<ProductType | null>(null);
+  const [imgIndex, setImgIndex] = useState<string>();
 
+  // 🟢 Fetch product by ID
+  const handleDataById = async () => {
+    if (!id) return;
+    const data = await fetchProductById(id as string);
+    if (data) {
+      setDataById(data);
+      if (Array.isArray(data.image)) {
+        setImgIndex(data.image?.[0]);
+      } else if (typeof data.image === "string") {
+        setImgIndex(data.image);
+      }
+    }
+  };
+
+  // console.log("cart",cartData)
+
+  useEffect(() => {
+    handleDataById();
+  }, [id]);
+
+  // ✅ Local storage safe loginData
   const loginData: LoginData =
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("login") || "null")
       : null;
-
-  const addToCart = () => {
-    if (loginData) {
-      handleCartData(newProduct);
-      toast.success("Item added to cart");
-    }
-  };
 
   return (
     <div className="flex gap-12 mt-10 px-10">
@@ -45,21 +54,21 @@ const Page = () => {
       <div className="w-1/2 flex flex-col items-center">
         <div className="bg-gray-100 rounded-lg p-6">
           <img
-            src={Array.isArray(newProduct.image) ? imgIndex : newProduct.image}
-            alt={newProduct.name}
+            src={imgIndex}
+            alt={dataById?.name || ""}
             className="w-[400px] h-[350px] object-contain bg-[#F3F4F6]"
           />
         </div>
 
         {/* Thumbnails */}
-        {Array.isArray(newProduct.image) && (
+        {Array.isArray(dataById?.image) && (
           <div className="flex gap-4 mt-6">
-            {newProduct.image.map((img, index) => (
+            {dataById.image.map((img, index) => (
               <img
                 onClick={() => setImgIndex(img)}
                 key={index}
                 src={img}
-                alt={newProduct.name}
+                alt={dataById?.name || ""}
                 className="w-[80px] h-[80px] object-contain border rounded-lg cursor-pointer hover:shadow-md"
               />
             ))}
@@ -69,7 +78,7 @@ const Page = () => {
 
       {/* Right Side - Product Details */}
       <div className="w-1/2">
-        <h1 className="text-3xl font-semibold">{newProduct.name}</h1>
+        <h1 className="text-3xl font-semibold">{dataById?.name}</h1>
 
         {/* Rating */}
         <div className="flex items-center mt-2">
@@ -79,15 +88,19 @@ const Page = () => {
 
         {/* Description */}
         <p className="mt-4 text-gray-700 leading-relaxed">
-          {newProduct.description}
+          {dataById?.description}
         </p>
 
         {/* Price */}
         <div className="mt-4 space-x-3">
-          <span className="text-2xl font-bold">${newProduct.offerPrice}</span>
-          <span className="text-gray-500 line-through">
-            ${newProduct.price}
+          <span className="text-2xl font-bold">
+            ${dataById?.offerPrice || dataById?.price}
           </span>
+          {dataById?.offerPrice && (
+            <span className="text-gray-500 line-through">
+              ${dataById?.price}
+            </span>
+          )}
         </div>
 
         {/* Extra Info */}
@@ -102,37 +115,17 @@ const Page = () => {
           </p>
           <p>
             <span className="font-medium w-20 inline-block">Category:</span>{" "}
-            {"Product"}
+            {dataById?.category || "Product"}
           </p>
         </div>
-
-        {/* Buttons */}
-        <div className="flex gap-4 mt-6">
-          {matchCartData ? (
-            <CustomBtn
-              onClick={() => router.push("/cart")}
-              className="w-1/2 bg-slate-200 text-gray-600"
-            >
-              Go to cart
-            </CustomBtn>
-          ) : (
-            <CustomBtn
-              onClick={() => addToCart()}
-              className="w-1/2 bg-slate-200 text-gray-600"
-            >
-              Add to cart
-            </CustomBtn>
-          )}
-
-          <CustomBtn
-            onClick={() => {
-              addToCart();
-              router.push("/cart");
-            }}
-            className="w-1/2 bg-orange-500 text-white hover:bg-orange-600"
+        <div className="space-x-3 mt-5">
+          <button
+            onClick={() => id && addToCart(id as string)}
+            className="px-4 py-2 w-40 bg-gray-300 text-black  rounded cursor-pointer"
           >
-            Buy now
-          </CustomBtn>
+            Add to cart
+          </button>
+          <CustomBtn className="w-40">Buy now</CustomBtn>
         </div>
       </div>
     </div>

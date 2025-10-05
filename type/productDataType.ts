@@ -1,13 +1,30 @@
+// Abhi aisa hai
 export interface ProductType {
   _id: string;
-  userId: string;
   name: string;
-  description: string;
   price: number;
-  offerPrice: number;
-  image: string[]; // multiple images
+  offerPrice : number;
+  description: string;
   category: string;
-  date: number; // timestamp (ms)
-  quantity: number ; 
-  __v: number;
+  image?: string;
+}
+
+export interface CartItemResponseType {
+    productId: ProductID;
+    offerPrice : number
+    quantity:  number;
+    _id:       string;
+}
+
+export interface ProductID {
+    _id:             string;
+    name:            string;
+    description:     string;
+    price:           number;
+    offerPrice:      number;
+    image:           string[];
+    category:        string;
+    wishlistProduct: any[];
+    date:            number;
+    __v:             number;
 }
