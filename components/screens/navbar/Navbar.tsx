@@ -7,6 +7,7 @@ import AuthTab from "../auth/AuthTab";
 import {
   CircleUserRound,
   Heart,
+  LocationEdit,
   LogOut,
   ShoppingBag,
   ShoppingCart,
@@ -38,13 +39,12 @@ const Navbar = () => {
     };
   }, []);
 
-  // const token = localStorage.getItem("token");
 
   const { openModal } = useModal();
   const fetchProfileData = async () => {
     const loginData = await profile();
-    // console.log(loginData);
-    setUser(loginData?.data.user);
+    console.log(loginData);
+    setUser(loginData?.data?.user);
   };
   // console.log(user)
   const userName = user?.name;
@@ -52,7 +52,7 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchProfileData();
-  }, []);
+  },[]);
 
   const logoutData = async () => {
     try {
@@ -116,11 +116,14 @@ const Navbar = () => {
             <>
               <div
                 ref={modalRef}
-                className="absolute top-15 right-5 border h-[43vh] w-[25vw] bg-white shadow-xl rounded-lg flex flex-col z-50"
+                className="absolute top-15 right-5 border h-[50vh] w-[25vw]  bg-white shadow-xl rounded-lg flex flex-col z-50"
               >
                 {/* Profile Section */}
-                <div className="flex items-center p-4 gap-5 border-b">
-                  <CircleUserRound size={40} />
+                <div onClick={()=>{ 
+                  setProfileModal(false)
+                  router.push("/profile")}}
+                 className="flex items-center p-4 gap-5 border-b cursor-pointer">
+                  <CircleUserRound  size={40} />
                   <div>
                     <p className="font-semibold">{user?.name}</p>
                     <p className="text-sm text-gray-400">{user?.email}</p>
@@ -143,6 +146,10 @@ const Navbar = () => {
                 <div className="flex gap-2 items-center p-4 border-b hover:bg-gray-100 cursor-pointer">
                   <ShoppingBag />
                   <p className=" text-gray-500">My orders</p>
+                </div>
+                <div className="flex gap-2 items-center p-4 border-b hover:bg-gray-100 cursor-pointer">
+                  <LocationEdit />
+                  <p className=" text-gray-500">My Address</p>
                 </div>
                 <div
                   onClick={() => {

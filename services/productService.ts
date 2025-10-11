@@ -4,9 +4,14 @@ import { toast } from "sonner"
 import { productInputType } from "@/components/screens/admin/validation/adminSchema";
 
 const productService = {
-    addProduct : async(data : productInputType)=>{
-        const response = await api.post(`${ApiUrl}/product/create` , data);
+    addProduct: async (data: productInputType) => {
+        const response = await api.post(`${ApiUrl}/product/create`, data);
         console.log(response)
+        return response?.data
+    },
+    deleteProductById: async (productId: string) => {
+        const response = await api.delete(`${ApiUrl}/product/delete/${productId}`)
+        console.log("ress", response)
         return response?.data
     },
     getAllProduct: async () => {
@@ -51,7 +56,7 @@ const productService = {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-              return  toast.error("Please login to get wishlist items");
+                return toast.error("Please login to get wishlist items");
             }
             const response = await api.get(`${ApiUrl}/product/getWishlistProduct`,
                 {
@@ -73,7 +78,7 @@ const productService = {
             }
 
             const response = api.delete(`${ApiUrl}/product/removeFromWishlist`, {
-                data: {productId},
+                data: { productId },
                 headers: {
                     Authorization: (`bearer ${token}`)
                 }

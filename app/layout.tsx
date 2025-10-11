@@ -7,6 +7,7 @@ import NextTopLoader from "nextjs-toploader";
 import { ProductProvider } from "@/context/productContext";
 import { CartProvider } from "@/context/cartContext";
 import ClientLayout from "@/components/screens/layout/ClientLayout";
+import { AddressProvider } from "@/context/addressContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,10 +37,12 @@ export default function RootLayout({
         <Toaster position="bottom-right" richColors duration={2000} />
         <CartProvider>
           <ProductProvider>
-            <ModalProvider>
-              <NextTopLoader showSpinner={false} color="#EA580C" />
-              <ClientLayout>{children}</ClientLayout>
-            </ModalProvider>
+            <AddressProvider>
+              <ModalProvider>
+                <NextTopLoader showSpinner={false} color="#EA580C" />
+                <ClientLayout>{children}</ClientLayout>
+              </ModalProvider>
+            </AddressProvider>
           </ProductProvider>
         </CartProvider>
       </body>

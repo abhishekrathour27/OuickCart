@@ -8,7 +8,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "sonner";
 import { useModal } from "@/context/modalContext";
 import { login } from "@/services/authServices";
-import { useRouter } from "nextjs-toploader/app";
+import { useRouter } from "next/navigation";
 
 type Props = {
   switchToSignUp: () => void;
@@ -33,12 +33,16 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
       const loginData = await login(data);
       if (loginData.status === "success") {
         localStorage.setItem("token", loginData.data.accessToken);
-        closeModal();
         toast.success(loginData?.message);
-      }
-      if(loginData?.data?.role === "admin"){
-        // router.push("/admin")
-        localStorage.setItem("role" , "admin")
+        
+        if(loginData?.data?.role === "admin") {
+          localStorage.setItem("role", "admin");
+          closeModal();
+          router.push("/admin");
+        } else {
+          closeModal();
+          router.refresh(); // This will update the UI without a full page refresh
+        }
       }
     } catch (error) {
       toast.error("Login failed");
@@ -52,8 +56,8 @@ const LoginFrom = ({ switchToSignUp }: Props) => {
       toast.error("Please enter your email first");
       return;
     }
+    closeModal();
     router.push("/forget-password");
-    closeModal()
   };
 
   return (

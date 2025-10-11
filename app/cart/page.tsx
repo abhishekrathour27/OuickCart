@@ -2,19 +2,19 @@
 import { useCart } from "@/context/cartContext";
 import React, { useState } from "react";
 import { useModal } from "@/context/modalContext";
-import { addressTypeData } from "@/components/screens/select_address/validation/addressSchema";
 import Address from "@/components/screens/select_address/Address";
-import { toast } from "sonner";
 import { useProduct } from "@/context/productContext";
 import { useRouter } from "next/navigation";
+import { useAddress } from "@/context/addressContext";
 
 const Page = () => {
   const { data, removeFromCart , addToCart , decreaseCartData } = useCart();
   const { products } = useProduct();
-  const [address, setAddress] = useState<addressTypeData[]>([]);
   const [addressModal, setAddressModal] = useState(false);
   const { openModal } = useModal();
   const router = useRouter();
+
+  const {addresses }= useAddress()
 
   // console.log("object", cartData);
 
@@ -26,7 +26,7 @@ const Page = () => {
   const taxPrice = Number(((totalPrice * 2) / 100).toFixed(2));
 
   // console.log("address", address);
-  console.log("cartd", data);
+  console.log("cartd", addresses);
   return (
     <div className="flex justify-center mt-10">
       {/* Cart Section */}
@@ -156,7 +156,7 @@ const Page = () => {
           </button>
           {addressModal && (
             <div
-              onClick={() => openModal(<Address setAddress={setAddress} />)}
+              onClick={() => openModal(<Address mode="create"  />)}
               className="w-full border border-black p-2 text-left cursor-pointer"
             >
               ADD ADDRESS +
@@ -197,11 +197,6 @@ const Page = () => {
         </div>
         {/* Place Order */}
         <button
-          onClick={() => {
-            data.length && address.length
-              ? toast.success("Order placed")
-              : toast.error("Failed to placed");
-          }}
           className="w-full bg-orange-500 text-white py-3 font-semibold cursor-pointer"
         >
           Place Order

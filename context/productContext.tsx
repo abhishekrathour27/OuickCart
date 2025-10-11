@@ -30,7 +30,7 @@ interface ProductContextType {
   fetchProductById: (id: string) => Promise<Product | null>;
   handleAddWishlist: (productId: string) => Promise<Product | null>;
   removeFromWishlist: (productId: string) => Promise<Product | null>;
-  
+  deleteProductById: (productId: string) => Promise<Product | null>;
 }
 
 // 🔹 Context create
@@ -91,16 +91,26 @@ export const ProductProvider = ({ children }: ProductProviderProps) => {
   ): Promise<Product | null> => {
     try {
       const response = await productService.addToWishlist(productId);
-      
+
       // Find the product from products array
-      const addedProduct = products.find(p => p._id === productId);
-      if (addedProduct && !wishlistProduct.some(p => p._id === productId)) {
-        setWishlistProduct(prev => [...prev, addedProduct]);
+      const addedProduct = products.find((p) => p._id === productId);
+      if (addedProduct && !wishlistProduct.some((p) => p._id === productId)) {
+        setWishlistProduct((prev) => [...prev, addedProduct]);
       }
       return response?.data;
     } catch (error: any) {
       toast.error(error.message);
       return null;
+    }
+  };
+
+  const deleteProductById = async (productId: string) : Promise<Product | null> => {
+    try {
+      const response = await productService.deleteProductById(productId);
+      return response
+    } catch (error: any) {
+      toast(error.message);
+      return null
     }
   };
 
@@ -122,9 +132,9 @@ export const ProductProvider = ({ children }: ProductProviderProps) => {
   ): Promise<Product | null> => {
     try {
       const response = await productService.removeFromWishlist(productId);
-      
+
       // Update local state directly
-      setWishlistProduct(prev => prev.filter(p => p._id !== productId));
+      setWishlistProduct((prev) => prev.filter((p) => p._id !== productId));
       return response?.data;
     } catch (error: any) {
       toast.error(error.message);
@@ -143,6 +153,7 @@ export const ProductProvider = ({ children }: ProductProviderProps) => {
         fetchProductById,
         handleAddWishlist,
         removeFromWishlist,
+        deleteProductById
       }}
     >
       {children}

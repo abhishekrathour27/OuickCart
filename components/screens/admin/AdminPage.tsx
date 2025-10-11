@@ -8,9 +8,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import productService from "@/services/productService";
 import { toast } from "sonner";
 import { logout } from "@/services/authServices";
+import { useProduct } from "@/context/productContext";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("add");
+  const { products , deleteProductById } = useProduct();
 
   // initialize form
   const {
@@ -205,6 +207,53 @@ const AdminPage = () => {
             </CustomBtn>
           </form>
         )}
+        <div>
+          {activeTab === "list" && (
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="grid grid-cols-4 items-center bg-slate-100 border border-slate-400 rounded-lg px-6 py-3 font-semibold text-slate-700">
+                <span>Product</span>
+                <span>Category</span>
+                <span>Price</span>
+                <span>Action</span>
+              </div>
+
+              {/* Product Rows */}
+              <div className="space-y-3">
+                {products.map((item) => (
+                  <div
+                    key={item._id}
+                    className="grid grid-cols-4 items-center border border-slate-300 rounded-lg px-6 py-3 hover:bg-slate-50 transition"
+                  >
+                    {/* Product */}
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={item?.image?.[0]}
+                        alt={item?.name}
+                        className="w-14 h-14 object-cover rounded-md border"
+                      />
+                      <span className="font-medium">{item?.name}</span>
+                    </div>
+
+                    {/* Category */}
+                    <span className="text-slate-600">{item?.category}</span>
+
+                    {/* Price */}
+                    <span className="font-semibold text-green-600">
+                      ₹{item?.offerPrice}
+                    </span>
+
+                    {/* Action */}
+                    <button onClick={()=> deleteProductById(item._id)}
+                     className="px-3 py-2 w-30 cursor-pointer bg-red-500 text-white text-sm rounded-md hover:bg-red-600">
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
